@@ -1,0 +1,4 @@
+flask
+flask_restful
+psycopg2
+python-dotenv==0.21.0
