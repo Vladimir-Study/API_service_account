@@ -70,20 +70,15 @@ class EditUser(Resource):
         with conn:
             with conn.cursor() as cursor:
                 for key, val in edit_params['service_data'].items():
-                    cursor.execute(f"SELECT id FROM service_attr WHERE "
-                                  f"attribute_name = '{key}' and "
-                                  f"service_id = {edit_params['service']}")
-                    attribute_id = cursor.fetchone()
-                    print(attribute_id)
                     cursor.execute(f"SELECT id FROM account_service_data "
-                                    f"WHERE attribute_id = {attribute_id[0]}")
+                                    f"WHERE attribute_id = {key}")
                     attr_in_table = cursor.fetchone()
                     if attr_in_table is None:
                         abort(400, message=f"Attribute '{key}' is not table")
                     else:
                         cursor.execute(f"UPDATE account_service_data "
                                 f"SET attribute_value = {val} "
-                                f"WHERE attribute_id = {attribute_id[0]}")
+                                f"WHERE attribute_id = {key}")
         return edit_params
 
 
@@ -91,8 +86,8 @@ class DeleteAccount(Resource):
 
     def delete(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('client_id', type=int, required=True)
-        parser.add_argument('service', type=int, required=True)
+        parser.add_argument("client_id", type=int, required=True)
+        parser.add_argument("service", type=int, required=True)
         delete_line = parser.parse_args()
         conn = connections()
         with conn:
@@ -108,7 +103,7 @@ class DeleteAccount(Resource):
                         conn.commit()
                     except:
                         continue
-        return { 'massage': f"Client_id: {delete_line['client_id']} "
+        return { "massage": f"Client_id: {delete_line['client_id']} "
                 f"for service {delete_line['service']} DELETE"}
 
 
